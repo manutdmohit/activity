@@ -4,6 +4,8 @@ import moment from 'moment-timezone';
 
 import Activity from '../models/Activity';
 
+import { NotFoundError } from '../errors';
+
 // @desc Add Activity
 // @route POST /api/v1/activities
 // @access Public
@@ -27,7 +29,7 @@ export const getAllActivities = async (req: Request, res: Response) => {
       $addFields: {
         date: {
           $dateToString: {
-            format: '%Y-%m-%d %H:%M:%S',
+            format: '%Y-%m-%d %H:%M:%S %p',
             date: '$createdAt',
             timezone: 'Asia/Kathmandu',
           },
@@ -44,4 +46,31 @@ export const getAllActivities = async (req: Request, res: Response) => {
   ]);
 
   res.status(StatusCodes.OK).json({ count, allActivities });
+};
+
+// @desc Get Activity
+// @route GET /api/v1/activities/:id
+// @access Public
+export const getActivity = async (req: Request, res: Response) => {
+  const activityId = req.params.id;
+
+  const getActivity = await Activity.findById(activityId).select(
+    '-updatedAt -__v'
+  );
+
+  if (!getActivity) {
+    throw new NotFoundError(`No activity found with id ${activityId}`);
+  }
+
+  const date = moment(getActivity.createdAt)
+    .tz('Asia/Kathmandu')
+    .format('YYYY-MM-DD HH:mm:ss');
+
+  const activity = {
+    _id: getActivity._id,
+    description: getActivity.description,
+    date: date,
+  };
+
+  res.status(StatusCodes.OK).json({ activity });
 };
