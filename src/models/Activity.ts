@@ -2,7 +2,6 @@ import mongoose, { Document, Schema } from 'mongoose';
 
 interface IActivity extends Document {
   description: string;
-  date: Date;
 }
 
 const activitySchema = new Schema<IActivity>(
