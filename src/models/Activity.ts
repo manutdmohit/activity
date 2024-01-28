@@ -5,16 +5,17 @@ interface IActivity extends Document {
   date: Date;
 }
 
-const activitySchema = new Schema<IActivity>({
-  description: {
-    type: String,
-    required: [true, 'Please provide description of the activity'],
+const activitySchema = new Schema<IActivity>(
+  {
+    description: {
+      type: String,
+      required: [true, 'Please provide description of the activity'],
+    },
   },
-  date: {
-    type: Date,
-    default: Date.now(),
-  },
-});
+  {
+    timestamps: true,
+  }
+);
 
 const Activity = mongoose.model<IActivity>('Activity', activitySchema);
 
