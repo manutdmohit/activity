@@ -29,7 +29,7 @@ export const getAllActivities = async (req: Request, res: Response) => {
       $addFields: {
         date: {
           $dateToString: {
-            format: '%Y-%m-%d %H:%M:%S %p',
+            format: '%Y-%m-%d %H:%M:%S',
             date: '$createdAt',
             timezone: 'Asia/Kathmandu',
           },
@@ -73,4 +73,21 @@ export const getActivity = async (req: Request, res: Response) => {
   };
 
   res.status(StatusCodes.OK).json({ activity });
+};
+// @desc Update Activity
+// @route PATCH /api/v1/activities/:id
+// @access Public
+export const updateActivity = async (req: Request, res: Response) => {
+  const activityId = req.params.id;
+
+  const getActivity = await Activity.findByIdAndUpdate(activityId, req.body, {
+    new: true,
+    runValidators: true,
+  }).select('-updatedAt -__v');
+
+  if (!getActivity) {
+    throw new NotFoundError(`No activity found with id ${activityId}`);
+  }
+
+  res.status(StatusCodes.OK).json({ msg: 'Activity updated successfully' });
 };
