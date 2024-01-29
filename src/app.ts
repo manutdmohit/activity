@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
 import 'express-async-errors';
-import express from 'express';
+import express, { Request, Response } from 'express';
 
 import activityRouter from './routes/activityRoutes';
 import connectDB from './db/connectDB';
@@ -14,6 +14,10 @@ dotenv.config();
 const PORT = process.env.PORT || 8000;
 
 app.use(express.json());
+
+app.get('/', (req: Request, res: Response) => {
+  res.send('Welcome to Homepage');
+});
 
 // Mount the routers
 app.use('/api/v1/activities', activityRouter);
