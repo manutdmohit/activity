@@ -2,6 +2,7 @@ import express, { Router } from 'express';
 
 import {
   addActivity,
+  deleteActivity,
   getActivity,
   getAllActivities,
   updateActivity,
@@ -10,6 +11,10 @@ import {
 const router: Router = express.Router();
 
 router.route('/').post(addActivity).get(getAllActivities);
-router.route('/:id').get(getActivity).patch(updateActivity);
+router
+  .route('/:id')
+  .get(getActivity)
+  .patch(updateActivity)
+  .delete(deleteActivity);
 
 export default router;
