@@ -74,6 +74,7 @@ export const getActivity = async (req: Request, res: Response) => {
 
   res.status(StatusCodes.OK).json({ activity });
 };
+
 // @desc Update Activity
 // @route PATCH /api/v1/activities/:id
 // @access Public
@@ -90,4 +91,19 @@ export const updateActivity = async (req: Request, res: Response) => {
   }
 
   res.status(StatusCodes.OK).json({ msg: 'Activity updated successfully' });
+};
+
+// @desc Delete Activity
+// @route DELETE /api/v1/activities/:id
+// @access Public
+export const deleteActivity = async (req: Request, res: Response) => {
+  const activityId = req.params.id;
+
+  const getActivity = await Activity.findByIdAndDelete(activityId);
+
+  if (!getActivity) {
+    throw new NotFoundError(`No activity found with id ${activityId}`);
+  }
+
+  res.status(StatusCodes.OK).json({ msg: 'Activity deleted successfully' });
 };
