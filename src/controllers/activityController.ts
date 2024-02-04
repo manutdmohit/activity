@@ -107,3 +107,47 @@ export const deleteActivity = async (req: Request, res: Response) => {
 
   res.status(StatusCodes.OK).json({ msg: 'Activity deleted successfully' });
 };
+
+// @desc Get All Activities for the present day
+// @route GET /api/v1/activities/today
+// @access Public
+export const getTodayActivities = async (req: Request, res: Response) => {
+  const startOfDay = moment().startOf('day').toDate();
+  const endOfDay = moment().endOf('day').toDate();
+
+  const todayActivities = await Activity.aggregate([
+    {
+      $match: {
+        createdAt: {
+          $gte: startOfDay,
+          $lte: endOfDay,
+        },
+      },
+    },
+    {
+      $sort: { createdAt: -1 },
+    },
+    {
+      $addFields: {
+        date: {
+          $dateToString: {
+            format: '%Y-%m-%d %H:%M:%S',
+            date: '$createdAt',
+            timezone: 'Asia/Kathmandu',
+          },
+        },
+      },
+    },
+    {
+      $project: {
+        createdAt: 0,
+        updatedAt: 0,
+        __v: 0,
+      },
+    },
+  ]);
+
+  res
+    .status(StatusCodes.OK)
+    .json({ count: todayActivities.length, activities: todayActivities });
+};
